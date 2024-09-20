@@ -1,5 +1,6 @@
 package com.enigmacamp.loanapp.controller;
 
+import com.enigmacamp.loanapp.constant.ApiPath;
 import com.enigmacamp.loanapp.dto.request.AuthRequest;
 import com.enigmacamp.loanapp.dto.response.CommonResponse;
 import com.enigmacamp.loanapp.dto.response.LoginResponse;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(ApiPath.AUTH_URL)
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/signin")
+    @PostMapping(ApiPath.REGISTER_URL)
     public ResponseEntity<?> registerCustomer (@RequestBody AuthRequest request) {
 
         RegisterResponse registerResponse = authService.registerCustomer(request);
@@ -36,7 +37,7 @@ public class AuthController {
 
     }
 
-    @PostMapping("/login")
+    @PostMapping(ApiPath.LOGIN_URL)
     public ResponseEntity<?> loginCustomer (@RequestBody AuthRequest request) {
 
         LoginResponse loginResponse = authService.login(request);
@@ -53,20 +54,20 @@ public class AuthController {
     }
 
 
-    @PostMapping("/register/admin")
-    public ResponseEntity<?> registerAdmin (@RequestBody AuthRequest request) {
-
-        RegisterResponse registerResponse = authService.registerAdmin(request);
-
-        CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
-                .message("Successfully registered admin.")
-                .status(HttpStatus.CREATED.value())
-                .data(registerResponse)
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-
-    }
+//    @PostMapping("/register/admin")
+//    public ResponseEntity<?> registerAdmin (@RequestBody AuthRequest request) {
+//
+//        RegisterResponse registerResponse = authService.registerAdmin(request);
+//
+//        CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
+//                .message("Successfully registered admin.")
+//                .status(HttpStatus.CREATED.value())
+//                .data(registerResponse)
+//                .build();
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//
+//
+//    }
 
 }

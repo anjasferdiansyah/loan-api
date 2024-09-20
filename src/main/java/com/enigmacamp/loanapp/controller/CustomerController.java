@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -92,6 +93,19 @@ public class CustomerController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
+        Customer customer = customerService.getById(id);
+        customerService.delete(customer.getId());
+
+        CommonResponse<?> commonResponse = CommonResponse.builder()
+                .message("Customer Has Been Deleted")
+                .status(HttpStatus.OK.value())
+                .data(null)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(commonResponse);
     }
 
 
