@@ -44,7 +44,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 UserDetails user = userService.loadByUserId(userInfo.get("userId").toString());
 //                 validasi/authentication by token
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        user,
+                        user.getUsername(),
                         null,
                         user.getAuthorities()
                 );

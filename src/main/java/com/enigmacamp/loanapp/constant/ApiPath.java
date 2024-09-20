@@ -7,5 +7,6 @@ public class ApiPath {
     public static final String GET_BY_ID = "/{id}";
     public static final String AUTH_URL = "/api/auth";
     public static final String INSTALLMENT_TYPE_URL = "/api/installment-types";
-    public static final String LOAN_TYPE = "/api/loan-types";
+    public static final String LOAN_TYPE_URL = "/api/loan-types";
+    public static final String LOAN_TRANSACTION_URL = "/api/transactions";
 }

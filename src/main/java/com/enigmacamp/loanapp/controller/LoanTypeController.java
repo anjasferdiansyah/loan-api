@@ -4,7 +4,6 @@ import com.enigmacamp.loanapp.constant.ApiPath;
 import com.enigmacamp.loanapp.dto.response.CommonResponse;
 import com.enigmacamp.loanapp.entity.InstallmentType;
 import com.enigmacamp.loanapp.entity.LoanType;
-import com.enigmacamp.loanapp.service.InstallmentTypeService;
 import com.enigmacamp.loanapp.service.LoanTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiPath.LOAN_TYPE)
+@RequestMapping(ApiPath.LOAN_TYPE_URL)
 @RequiredArgsConstructor
 public class LoanTypeController {
 
@@ -22,7 +21,7 @@ public class LoanTypeController {
 
 
     @PostMapping
-    public ResponseEntity<?> createInstallmentType(@RequestBody LoanType loanType) {
+    public ResponseEntity<?> createLoanTypes(@RequestBody LoanType loanType) {
         LoanType newLoanType = loanTypeService.createNew(loanType);
 
         CommonResponse<LoanType> response = CommonResponse.<LoanType>builder()
@@ -35,7 +34,7 @@ public class LoanTypeController {
 
 
     @GetMapping
-    public ResponseEntity<?> getAllInstallmentTypes() {
+    public ResponseEntity<?> getAllLoanTypes() {
         List<LoanType> allLoanTypes = loanTypeService.findAll();
 
         CommonResponse<List<LoanType>> response = CommonResponse.<List<LoanType>>builder()
@@ -49,7 +48,7 @@ public class LoanTypeController {
 
 
     @GetMapping(ApiPath.GET_BY_ID)
-    public ResponseEntity<?> getInstallmentTypeById(@PathVariable String id) {
+    public ResponseEntity<?> getLoanTypeById(@PathVariable String id) {
         LoanType loanType = loanTypeService.findById(id);
 
         CommonResponse<LoanType> response = CommonResponse.<LoanType>builder()
@@ -62,7 +61,7 @@ public class LoanTypeController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateInstallmentType(@RequestBody LoanType loanType) {
+    public ResponseEntity<?> updateLoanType(@RequestBody LoanType loanType) {
 
         LoanType updatedLoanType = loanTypeService.update(loanType);
 
@@ -75,8 +74,8 @@ public class LoanTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> deleteInstallmentType(@PathVariable String id) {
+    @DeleteMapping(ApiPath.GET_BY_ID)
+    public ResponseEntity<?> deleteLoanType(@PathVariable String id) {
         loanTypeService.delete(id);
 
         CommonResponse<?> response = CommonResponse.<InstallmentType>builder()
