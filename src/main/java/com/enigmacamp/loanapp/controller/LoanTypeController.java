@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(ApiPath.INSTALLMENT_TYPE_URL)
+@RequestMapping(ApiPath.LOAN_TYPE)
 @RequiredArgsConstructor
 public class LoanTypeController {
 
