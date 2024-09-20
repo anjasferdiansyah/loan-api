@@ -33,4 +33,8 @@ public class Customer {
     private String phone;
     @Column
     private String status;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
