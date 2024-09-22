@@ -23,7 +23,7 @@ public class ErrorController {
                 .body(response);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<?> constraintViolationException(ConstraintViolationException e){
         CommonResponse<?> response = CommonResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -34,7 +34,7 @@ public class ErrorController {
                 .body(response);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<?> authenticationException(AuthenticationException e){
         CommonResponse<?> response = CommonResponse.<String>builder()
                 .status(HttpStatus.UNAUTHORIZED.value())

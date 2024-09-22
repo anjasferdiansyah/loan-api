@@ -7,15 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Entity
-@Table(name = "mst_customer")
+@Table(name = "m_staff")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Customer {
+public class Staff {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,15 +24,8 @@ public class Customer {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "date_of_birth")
-    private Date dateOfBirth;
-
-    @Column
-    private String phone;
-    @Column
-    private String status;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

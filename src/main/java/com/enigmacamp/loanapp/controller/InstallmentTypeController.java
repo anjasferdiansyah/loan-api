@@ -7,6 +7,7 @@ import com.enigmacamp.loanapp.service.InstallmentTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping(ApiPath.INSTALLMENT_TYPE_URL)
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
 public class InstallmentTypeController {
 
     private final InstallmentTypeService installmentTypeService;

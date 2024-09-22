@@ -29,7 +29,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PutMapping
-    public ResponseEntity<?> createNewCustomer(@RequestBody CustomerUpdateRequest request){
+    public ResponseEntity<?> updateCustomerData(@RequestBody CustomerUpdateRequest request){
 
         Customer newCustomer = Customer.builder()
                 .firstName(request.getFirstName())
@@ -95,7 +95,7 @@ public class CustomerController {
                 .body(response);
     }
 
-    @DeleteMapping
+    @DeleteMapping(ApiPath.GET_BY_ID)
     public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
         Customer customer = customerService.getById(id);
         customerService.delete(customer.getId());

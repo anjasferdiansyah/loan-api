@@ -19,7 +19,7 @@ public class RoleServiceImpl implements RoleService {
         if(!optionalRole.isEmpty()) {
             return optionalRole.get();
         }
+            return roleRepository.saveAndFlush(role);
 
-        return roleRepository.save(role);
     }
 }
