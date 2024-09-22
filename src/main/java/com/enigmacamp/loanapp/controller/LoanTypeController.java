@@ -16,12 +16,12 @@ import java.util.List;
 @RestController
 @RequestMapping(ApiPath.LOAN_TYPE_URL)
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+
 public class LoanTypeController {
 
     private final LoanTypeService loanTypeService;
 
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     @PostMapping
     public ResponseEntity<?> createLoanTypes(@RequestBody LoanType loanType) {
         LoanType newLoanType = loanTypeService.createNew(loanType);
@@ -62,6 +62,7 @@ public class LoanTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     @PutMapping
     public ResponseEntity<?> updateLoanType(@RequestBody LoanType loanType) {
 
@@ -76,6 +77,7 @@ public class LoanTypeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     @DeleteMapping(ApiPath.GET_BY_ID)
     public ResponseEntity<?> deleteLoanType(@PathVariable String id) {
         loanTypeService.delete(id);
