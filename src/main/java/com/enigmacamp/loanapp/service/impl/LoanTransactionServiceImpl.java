@@ -113,15 +113,24 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
         }
 
         Double interestRate = Double.parseDouble(loanTransaction.getInterestRates()) / 100.0;
-        Double totalNominal = foundedLoanTrx.getNominal() * (1 + interestRate); // total nominal with interest
+        Double totalNominal = foundedLoanTrx.getNominal() * (1 + interestRate);
+        Double numberOfInstallment = 0.0;
 
-        // Update each LoanTransactionDetail with the new nominal value
+        InstallmentType installmentType = installmentTypeService.findById(foundedLoanTrx.getInstalmentType().getId());
+
+        switch (installmentType.getInstallmentType()){
+            case ONE_MONTH -> numberOfInstallment = 1.0;
+            case THREE_MONTHS -> numberOfInstallment = 3.0;
+            case NINE_MONTHS -> numberOfInstallment = 9.0;
+            case TWELVE_MONTHS -> numberOfInstallment = 12.0;
+        }
+
+
         List<LoanTransactionDetail> loanTransactionDetails = foundedLoanTrx.getLoanTransactionDetails();
         for (LoanTransactionDetail detail : loanTransactionDetails) {
-            detail.setNominal(totalNominal); // Set the nominal for each transaction detail
+            detail.setNominal(totalNominal/numberOfInstallment);
         }
         foundedLoanTrx.setLoanTransactionDetails(loanTransactionDetails);
-
 
         return loanTransactionRepository.saveAndFlush(foundedLoanTrx);
     }

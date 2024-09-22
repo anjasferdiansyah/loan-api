@@ -22,4 +22,6 @@ public class TransactionResponse {
     private String approvedBy;
     private String approvalStatus;
     private List<TransactionDetailResponse> transactionDetailResponse;
+    private Long createdAt;
+    private Long updatedAt;
 }

@@ -8,7 +8,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.enigmacamp.loanapp.entity.AppUser;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -62,8 +61,8 @@ public class JwtUtil {
             log.info("decoded JWT :" + decodedJWT.toString());
             return decodedJWT.getIssuer().equals(appName);
         } catch (JWTVerificationException exception){
-            log.error("Error while verifying token {}", exception.getMessage());
-            return false;
+            log.error("Error while verifying JWT {}", exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
         }
     }
 

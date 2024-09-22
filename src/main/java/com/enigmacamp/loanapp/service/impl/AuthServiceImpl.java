@@ -12,6 +12,7 @@ import com.enigmacamp.loanapp.service.CustomerService;
 import com.enigmacamp.loanapp.service.RoleService;
 //import com.enigmacamp.loanapp.util.validation.ValidationUtil;
 import com.enigmacamp.loanapp.service.StaffService;
+import com.enigmacamp.loanapp.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final CustomerService customerService;
     private final StaffService staffService;
     private final RoleService roleService;
-//    private final ValidationUtil validationUtil;
+    private final ValidationUtil validationUtil;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
@@ -47,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegisterResponse registerCustomer(AuthRequest authRequest) {
         try {
-//            validationUtil.validate(authRequest);
+            validationUtil.validate(authRequest);
             // Create Role
             Role role = roleService.getOrSave(Role.builder()
                     .role(ERole.ROLE_CUSTOMER)
@@ -90,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     public RegisterResponse registerAdmin(AuthRequest authRequest) {
         try {
-
+            validationUtil.validate(authRequest);
             // Create Role
             Role admin = roleService.getOrSave(Role.builder()
                     .role(ERole.ROLE_ADMIN)
@@ -135,7 +136,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(AuthRequest authRequest) throws AuthenticationException {
         //tempat logic untuk login
-//        validationUtil.validate(authRequest);
+        validationUtil.validate(authRequest);
 //        log.info("username : " + authRequest.getUsername());
 //        log.info("password : " + authRequest.getPassword());
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -150,10 +151,12 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtUtil.generateToken(appUser);
         log.info("token: {}", token);
 
+        List<String> roles = appUser.getRoles().stream().map(r -> r.getRole().name()).toList();
+
         return LoginResponse.builder()
-                .token(token)
                 .email(appUser.getEmail())
-                .role(appUser.getRoles().toString())
+                .roles(roles)
+                .token(token)
                 .build();
     }
 }

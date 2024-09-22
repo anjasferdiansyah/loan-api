@@ -10,4 +10,6 @@ public class ApiPath {
     public static final String LOAN_TYPE_URL = "/api/loan-types";
     public static final String LOAN_TRANSACTION_URL = "/api/transactions";
     public static final String GET_USER_URL = "api/user/{id}";
+    public static final String APPROVAL_URL = "/approve";
+    public static final String PAY_URL = "/{id}/pay";
 }

@@ -66,9 +66,9 @@ public class LoanTransactionController {
     }
 
 
-    @PutMapping
+    @PutMapping(ApiPath.APPROVAL_URL)
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<?> updateLoanTransaction(@RequestBody LoanRequestByAdminOrStaff loanTransaction) {
+    public ResponseEntity<?> approveTransaction(@RequestBody LoanRequestByAdminOrStaff loanTransaction) {
 
         LoanTransaction update = loanTransactionService.update(loanTransaction);
 
