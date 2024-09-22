@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LoanRequestByAdminOrStaff {
     private String loanTransactionId;
-    private String interestRate;
+    private String interestRates;
 }

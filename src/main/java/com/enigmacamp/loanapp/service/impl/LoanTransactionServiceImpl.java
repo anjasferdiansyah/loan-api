@@ -20,6 +20,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 public class LoanTransactionServiceImpl implements LoanTransactionService {
@@ -51,26 +53,29 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
         LoanTransaction savedTransaction = loanTransactionRepository.saveAndFlush(transaction);
 
 // Buat LoanTransactionDetail setelah LoanTransaction disimpan
-        LoanTransactionDetail loanTransactionDetail = LoanTransactionDetail.builder()
-                .loanStatus(ELoanStatus.PAID)
-                .transactionDate(Instant.now().toEpochMilli())
-                .createdAt(Instant.now().toEpochMilli())
-                .loanTransaction(savedTransaction) // Referensikan LoanTransaction yang sudah disimpan
-                .build();
+        int numberOfInstallmentType = 0;
 
-// Simpan LoanTransactionDetail
-        loanTransactionDetailService.createNew(loanTransactionDetail);
+        switch (installmentType.getInstallmentType()){
+            case ONE_MONTH -> numberOfInstallmentType = 1;
+            case THREE_MONTHS -> numberOfInstallmentType = 3;
+            case NINE_MONTHS -> numberOfInstallmentType = 9;
+            case TWELVE_MONTHS -> numberOfInstallmentType = 12;
+        }
 
-// Tambahkan LoanTransactionDetail ke LoanTransaction
         List<LoanTransactionDetail> transactionDetailList = new ArrayList<>();
-        transactionDetailList.add(loanTransactionDetail);
+
+        for (int i = 1; i <= numberOfInstallmentType; i++){
+            LoanTransactionDetail loanTransactionDetail = LoanTransactionDetail.builder()
+                    .loanStatus(ELoanStatus.UNPAID)
+                    .loanTransaction(savedTransaction)
+                    .createdAt(Instant.now().toEpochMilli())
+                    .build();
+            transactionDetailList.add(loanTransactionDetail);
+            loanTransactionDetailService.createNew(loanTransactionDetail);
+        }
+
         savedTransaction.setLoanTransactionDetails(transactionDetailList);
-
-// Update dan simpan LoanTransaction dengan LoanTransactionDetails yang telah disetel
-        LoanTransaction newLoanTransaction = loanTransactionRepository.save(savedTransaction);
-
-        return loanTransactionRepository.save(newLoanTransaction);
-
+        return loanTransactionRepository.save(savedTransaction);
 
     }
 
@@ -93,12 +98,12 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     public LoanTransaction update(LoanRequestByAdminOrStaff loanTransaction) {
         LoanTransaction foundedLoanTrx = findByIdOrThrow(loanTransaction.getLoanTransactionId());
 
-        Double newNominal = (Double.parseDouble(loanTransaction.getInterestRate()))/100.0 + foundedLoanTrx.getNominal();
 
-        foundedLoanTrx.setNominal(newNominal);
+
+        foundedLoanTrx.setNominal(foundedLoanTrx.getNominal());
         foundedLoanTrx.setApprovalStatus(EApprovalStatus.APPROVED);
-        foundedLoanTrx.setUpdatedAt(Long.parseLong(Instant.now().toString()));
-        foundedLoanTrx.setApprovedAt(Long.parseLong(Instant.now().toString()));
+        foundedLoanTrx.setUpdatedAt(Instant.now().toEpochMilli());
+        foundedLoanTrx.setApprovedAt(Instant.now().toEpochMilli());
         // Code di bawah untuk mendapatkan informasi user yang sedang login
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -107,7 +112,18 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
             foundedLoanTrx.setApprovedBy(email);
         }
 
-        return loanTransactionRepository.save(foundedLoanTrx);
+        Double interestRate = Double.parseDouble(loanTransaction.getInterestRates()) / 100.0;
+        Double totalNominal = foundedLoanTrx.getNominal() * (1 + interestRate); // total nominal with interest
+
+        // Update each LoanTransactionDetail with the new nominal value
+        List<LoanTransactionDetail> loanTransactionDetails = foundedLoanTrx.getLoanTransactionDetails();
+        for (LoanTransactionDetail detail : loanTransactionDetails) {
+            detail.setNominal(totalNominal); // Set the nominal for each transaction detail
+        }
+        foundedLoanTrx.setLoanTransactionDetails(loanTransactionDetails);
+
+
+        return loanTransactionRepository.saveAndFlush(foundedLoanTrx);
     }
 
     @Override
