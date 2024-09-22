@@ -25,7 +25,7 @@ public class User {
     private String email;
     private String password;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
 

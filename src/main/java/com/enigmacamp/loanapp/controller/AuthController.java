@@ -38,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping(ApiPath.LOGIN_URL)
-    public ResponseEntity<?> loginCustomer (@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login (@RequestBody AuthRequest request) {
 
         LoginResponse loginResponse = authService.login(request);
 
@@ -54,20 +54,20 @@ public class AuthController {
     }
 
 
-//    @PostMapping("/register/admin")
-//    public ResponseEntity<?> registerAdmin (@RequestBody AuthRequest request) {
-//
-//        RegisterResponse registerResponse = authService.registerAdmin(request);
-//
-//        CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
-//                .message("Successfully registered admin.")
-//                .status(HttpStatus.CREATED.value())
-//                .data(registerResponse)
-//                .build();
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//
-//
-//    }
+    @PostMapping("/register/admin")
+    public ResponseEntity<?> registerAdmin (@RequestBody AuthRequest request) {
+
+        RegisterResponse registerResponse = authService.registerAdmin(request);
+
+        CommonResponse<RegisterResponse> response = CommonResponse.<RegisterResponse>builder()
+                .message("Successfully registered admin.")
+                .status(HttpStatus.CREATED.value())
+                .data(registerResponse)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+
+    }
 
 }

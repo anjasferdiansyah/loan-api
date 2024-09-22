@@ -41,10 +41,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 // set authentication ke spring security
                 Map<String, Object> userInfo = jwtUtil.getUserInfoByToken(token);
 
+
                 UserDetails user = userService.loadByUserId(userInfo.get("userId").toString());
 //                 validasi/authentication by token
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
+                        user,
                         null,
                         user.getAuthorities()
                 );

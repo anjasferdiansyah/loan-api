@@ -4,16 +4,14 @@ import com.enigmacamp.loanapp.constant.ERole;
 import com.enigmacamp.loanapp.dto.request.AuthRequest;
 import com.enigmacamp.loanapp.dto.response.LoginResponse;
 import com.enigmacamp.loanapp.dto.response.RegisterResponse;
-import com.enigmacamp.loanapp.entity.AppUser;
-import com.enigmacamp.loanapp.entity.Customer;
-import com.enigmacamp.loanapp.entity.Role;
-import com.enigmacamp.loanapp.entity.User;
+import com.enigmacamp.loanapp.entity.*;
 import com.enigmacamp.loanapp.repository.UserRepository;
 import com.enigmacamp.loanapp.security.JwtUtil;
 import com.enigmacamp.loanapp.service.AuthService;
 import com.enigmacamp.loanapp.service.CustomerService;
 import com.enigmacamp.loanapp.service.RoleService;
 //import com.enigmacamp.loanapp.util.validation.ValidationUtil;
+import com.enigmacamp.loanapp.service.StaffService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final CustomerService customerService;
+    private final StaffService staffService;
     private final RoleService roleService;
 //    private final ValidationUtil validationUtil;
     private final JwtUtil jwtUtil;
@@ -74,9 +73,11 @@ public class AuthServiceImpl implements AuthService {
 
             customerService.createNewCustomer(customer);
 
+            List<String> roles = customer.getUser().getRoles().stream().map(r -> r.getRole().name()).toList();
+
             return RegisterResponse.builder()
                     .email(customer.getUser().getEmail())
-                    .role(customer.getUser().getRoles().toString())
+                    .roles(roles)
                     .build();
 
         } catch (DataIntegrityViolationException ex) {
@@ -88,46 +89,45 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional(rollbackFor = Exception.class)
     public RegisterResponse registerAdmin(AuthRequest authRequest) {
-//        try {
-//            validationUtil.validate(authRequest);
-//            // Create Role
-//            Role admin = roleService.getOrSave(Role.builder()
-//                    .role(ERole.ROLE_ADMIN)
-//                    .build());
-//
-//            Role staff = roleService.getOrSave(Role.builder()
-//            .role(ERole.ROLE_STAFF)
-//                    .build());
-//
-//            List<Role> roleList = new ArrayList<>();
-//            roleList.add(admin);
-//            roleList.add(staff);
-//            // Create User Credential
-//
-//            User userCredential = User.builder()
-//                    .email(authRequest.getEmail())
-//                    .password(passwordEncoder.encode(authRequest.getPassword()))
-//                    .roles(roleList)
-//                    .build();
-//
-//            userRepository.saveAndFlush(userCredential);
-//
-//            //Customer
-//
-//            Admin admin = Admin.builder()
-//                    .userCredential(userCredential)
-//                    .build();
-//            adminService.createAdmin(admin);
-//
-//            return RegisterResponse.builder()
-//                    .username(admin.getUserCredential().getUsername())
-//                    .role(role.getName().toString())
-//                    .build();
-//
-//        } catch (DataIntegrityViolationException ex) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
-//        }
-        return registerCustomer(authRequest);
+        try {
+
+            // Create Role
+            Role admin = roleService.getOrSave(Role.builder()
+                    .role(ERole.ROLE_ADMIN)
+                    .build());
+
+            Role staff = roleService.getOrSave(Role.builder()
+            .role(ERole.ROLE_STAFF)
+                    .build());
+
+            List<Role> roleList = new ArrayList<>();
+            roleList.add(admin);
+            roleList.add(staff);
+            // Create User Credential
+
+
+
+            User userCredential = User.builder()
+                    .email(authRequest.getEmail())
+                    .password(passwordEncoder.encode(authRequest.getPassword()))
+                    .roles(roleList)
+                    .build();
+
+            userRepository.saveAndFlush(userCredential);
+
+            Staff newStaff = Staff.builder()
+                    .user(userCredential)
+                    .build();
+            staffService.createNew(newStaff);
+
+            return RegisterResponse.builder()
+                    .email(newStaff.getUser().getEmail())
+                    .roles(newStaff.getUser().getRoles().stream().map(r -> r.getRole().name()).toList())
+                    .build();
+
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+        }
     }
 
 

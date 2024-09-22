@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RegisterResponse {
+public class UserResponse {
     private String email;
     private List<String> roles;
 }

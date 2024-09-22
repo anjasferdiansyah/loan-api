@@ -59,6 +59,7 @@ public class JwtUtil {
 
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
+            log.info("decoded JWT :" + decodedJWT.toString());
             return decodedJWT.getIssuer().equals(appName);
         } catch (JWTVerificationException exception){
             log.error("Error while verifying token {}", exception.getMessage());
